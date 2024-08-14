@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node definition
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to insert a node at the end of the linked list
+void insertAtEnd(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* last = *head_ref;
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+    last->next = new_node;
+}
+
+// Function to find the middle node of the linked list
+struct Node* findMiddle(struct Node* head) {
+    struct Node* slow = head;
+    struct Node* fast = head;
+
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    return slow;
+}
+
+// Function to insert a new node after the middle node
+void insertAtMiddle(struct Node** head_ref, int new_data) {
+    struct Node* middle = findMiddle(*head_ref);
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+
+    new_node->data = new_data;
+    new_node->next = middle->next;
+    middle->next = new_node;
+}
+
+// Function to delete the middle node
+void deleteMiddle(struct Node** head_ref) {
+    if (*head_ref == NULL) return;
+    if ((*head_ref)->next == NULL) {
+        free(*head_ref);
+        *head_ref = NULL;
+        return;
+    }
+
+    struct Node* slow = *head_ref;
+    struct Node* fast = *head_ref;
+    struct Node* prev = NULL;
+
+    while (fast != NULL && fast->next != NULL) {
+        prev = slow;
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    prev->next = slow->next;
+    free(slow);
+}
+
+// Function to print the linked list
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+
+// Main function to demonstrate insertion and deletion in the middle
+int main() {
+    struct Node* head = NULL;
+
+    // Insert nodes into the linked list
+    insertAtEnd(&head, 1);
+    insertAtEnd(&head, 2);
+    insertAtEnd(&head, 3);
+    insertAtEnd(&head, 4);
+    insertAtEnd(&head, 5);
+
+    // Print the original list
+    printf("Original list:\n");
+    printList(head);
+
+    // Insert a node in the middle
+    insertAtMiddle(&head, 6);
+    printf("\nAfter inserting at middle:\n");
+    printList(head);
+
+    // Delete the middle node
+    deleteMiddle(&head);
+    printf("\nAfter deleting middle node:\n");
+    printList(head);
+
+    return 0;
+}
